@@ -52,7 +52,6 @@
 
   main { padding: 20px 24px; max-width: 1300px; margin: 0 auto; }
 
-  /* Config */
   .config-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .config-bar label { font-size: 0.7rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
   .config-bar input {
@@ -95,15 +94,21 @@
   .bc-sub .pos { color: var(--accent2); }
   .bc-sub .neg { color: var(--warn); }
 
-  /* ── Saldo Section ── */
+  /* Stats Row */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .stat-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-family: var(--mono); font-size: 1.2rem; color: var(--text); }
+  .stat-unit  { font-size: 0.68rem; color: var(--muted); margin-left: 3px; }
+  .stat-sub   { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+  /* Saldo Section */
   .section-title {
     font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
     color: var(--accent); margin-bottom: 12px; padding-left: 2px;
   }
 
-  .saldo-total {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px;
-  }
+  .saldo-total { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
   .saldo-card {
     background: var(--panel); border: 1px solid var(--border);
     border-radius: 8px; padding: 16px 18px; position: relative; overflow: hidden;
@@ -112,8 +117,7 @@
   .sc-cc::before    { background: linear-gradient(90deg, transparent, var(--accent2), transparent); }
   .sc-ceth::before  { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
   .sc-usdcx::before { background: linear-gradient(90deg, transparent, #60b4ff, transparent); }
-
-  .sc-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .sc-icon  { font-size: 1.4rem; margin-bottom: 6px; }
   .sc-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
   .sc-value { font-family: var(--mono); font-size: 1.5rem; font-weight: bold; }
   .sc-cc    .sc-value { color: var(--accent2); }
@@ -122,15 +126,8 @@
   .sc-unit { font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
   .sc-note { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-top: 6px; }
 
-  /* Per-account saldo grid */
-  .saldo-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px; margin-bottom: 24px;
-  }
-  .saldo-acc {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 14px;
-  }
+  .saldo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; margin-bottom: 24px; }
+  .saldo-acc { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
   .sa-name { font-family: var(--sans); font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 8px; }
   .sa-row  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .sa-token { font-size: 0.65rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
@@ -139,15 +136,9 @@
   .sa-ceth  { color: #a78bfa; }
   .sa-usdcx { color: #60b4ff; }
 
-  /* Main table */
-  .table-wrap {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; overflow: hidden; margin-bottom: 20px;
-  }
-  .table-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 18px; border-bottom: 1px solid var(--border);
-  }
+  /* Table */
+  .table-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); }
   .table-title { font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
   .acc-count   { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
 
@@ -163,16 +154,12 @@
   td { padding: 10px 12px; font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
 
   .td-name   { font-family: var(--sans); font-weight: 700; font-size: 0.9rem; color: var(--text); }
-  .td-num    { color: var(--muted); font-size: 0.7rem; margin-right: 4px; }
   .td-reward { color: var(--accent3); }
   .td-hour   { color: #fbbf24; font-weight: bold; }
   .td-est    { color: #a78bfa; }
   .td-uptime { color: var(--muted); font-size: 0.75rem; }
-  .td-cc     { color: var(--accent2); }
-  .td-ceth   { color: #a78bfa; }
-  .td-usdcx  { color: #60b4ff; }
+  .td-swap   { color: var(--accent); }
 
-  /* Rank badge */
   .rank-cell { display: flex; align-items: center; gap: 8px; }
   .rank-num  { font-family: var(--mono); font-size: 0.85rem; font-weight: bold; min-width: 60px; }
   .rank-bar-wrap { flex:1; height:4px; background:#0e334860; border-radius:2px; min-width:40px; }
@@ -208,7 +195,8 @@
     .big-cards { grid-template-columns: 1fr; }
     .bc-value { font-size: 1.5rem; }
     .saldo-total { grid-template-columns: 1fr; }
-    .saldo-grid { grid-template-columns: repeat(2, 1fr); }
+    .saldo-grid { grid-template-columns: repeat(2,1fr); }
+    .stats-row { grid-template-columns: repeat(2,1fr); }
   }
 </style>
 </head>
@@ -254,10 +242,34 @@
       </div>
     </div>
 
-    <!-- Saldo Section -->
-    <div class="section-title">💰 Saldo Tersimpan</div>
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Akun</div>
+        <div class="stat-value" id="s-total">—<span class="stat-unit">akun</span></div>
+        <div class="stat-sub" id="s-active">— aktif</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Swap</div>
+        <div class="stat-value" id="s-swaps" style="color:var(--accent)">—<span class="stat-unit">tx</span></div>
+        <div class="stat-sub">semua akun</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">CC (total)</div>
+        <div class="stat-value" id="s-cc" style="color:var(--accent2)">—<span class="stat-unit">CC</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">cETH (total)</div>
+        <div class="stat-value" id="s-ceth" style="color:#a78bfa">—<span class="stat-unit">cETH</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">USDCx (total)</div>
+        <div class="stat-value" id="s-usdcx" style="color:#60b4ff">—<span class="stat-unit">USDC</span></div>
+      </div>
+    </div>
 
-    <!-- Total Saldo 3 token -->
+    <!-- Saldo Section -->
+    <div class="section-title">💰 Saldo Tersimpan Per Token</div>
     <div class="saldo-total">
       <div class="saldo-card sc-cc">
         <div class="sc-icon">🟢</div>
@@ -282,7 +294,7 @@
     <!-- Per-account saldo -->
     <div class="saldo-grid" id="saldo-grid"></div>
 
-    <!-- Main Table -->
+    <!-- Table -->
     <div class="section-title">⬡ Detail & Peringkat Akun</div>
     <div class="table-wrap">
       <div class="table-header">
@@ -298,6 +310,7 @@
             <th>Δ Selama Uptime</th>
             <th style="color:#fbbf24">CC/Jam</th>
             <th style="color:#a78bfa">Est/24h</th>
+            <th>Swap</th>
             <th>Uptime</th>
             <th>Status</th>
           </tr>
@@ -326,62 +339,48 @@
   setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('id-ID',{hour12:false}); }, 1000);
   $('clock').textContent = new Date().toLocaleTimeString('id-ID',{hour12:false});
 
-  function formatUptime(startTime) {
-    const ms = Date.now() - startTime;
-    const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
-    return h > 0 ? `${h}j ${m}m` : `${m}m`;
+  function formatUptime(st) {
+    const ms = Date.now()-st, h=Math.floor(ms/3600000), m=Math.floor((ms%3600000)/60000);
+    return h>0?`${h}j ${m}m`:`${m}m`;
   }
-
-  function rewardPerHour(acc) {
-    const h = (Date.now() - acc.startTime) / 3600000;
-    if (h < 0.05 || !acc.diffReward || acc.diffReward <= 0) return 0;
-    return acc.diffReward / h;
+  function rewardPerHour(a) {
+    const h=(Date.now()-a.startTime)/3600000;
+    if(h<0.05||!a.diffReward||a.diffReward<=0) return 0;
+    return a.diffReward/h;
   }
-
   function rankClass(r) {
-    if (!r || r<=0) return 'rank-c';
-    if (r<=100)  return 'rank-s';
-    if (r<=1000) return 'rank-a';
-    if (r<=5000) return 'rank-b';
+    if(!r||r<=0) return 'rank-c';
+    if(r<=100) return 'rank-s'; if(r<=1000) return 'rank-a'; if(r<=5000) return 'rank-b';
     return 'rank-c';
   }
-  function rankBarW(r) {
-    if (!r || r<=0) return 0;
-    return Math.max(4, 100 - (r/20000)*100);
-  }
-
+  function rankBarW(r) { if(!r||r<=0) return 0; return Math.max(4,100-(r/20000)*100); }
   function fmtDelta(v) {
-    if (!v||v===0) return `<span class="delta-zero">+0.00 CC</span>`;
+    if(!v||v===0) return `<span class="delta-zero">+0.00 CC</span>`;
     return `<span class="${v>0?'delta-pos':'delta-neg'}">${v>0?'+':''}${v.toFixed(2)} CC</span>`;
   }
-
   function statusBadge(st) {
-    const s = (st||'init').toLowerCase();
-    let cls='s-init', label=st||'init';
-    if (s.includes('swap'))                              {cls='s-swapping';label='swapping';}
-    else if (s.includes('bulk'))                         {cls='s-bulk';    label='bulk-back';}
-    else if (s.includes('wait')||s.includes('menunggu')) {cls='s-wait';    label=st;}
-    else if (s==='done')                                 {cls='s-done';    label='done';}
-    else if (s.includes('error')||s.includes('gagal'))   {cls='s-error';   label=st;}
+    const s=(st||'init').toLowerCase();
+    let cls='s-init',label=st||'init';
+    if(s.includes('swap')){cls='s-swapping';label='swapping';}
+    else if(s.includes('bulk')){cls='s-bulk';label='bulk-back';}
+    else if(s.includes('wait')||s.includes('menunggu')){cls='s-wait';label=st;}
+    else if(s==='done'){cls='s-done';label='done';}
+    else if(s.includes('error')||s.includes('gagal')){cls='s-error';label=st;}
     return `<span class="status-badge ${cls}">${label}</span>`;
   }
 
   async function fetchData() {
-    if (!API_URL) { $('loading').textContent='⚠ Masukkan URL server di atas lalu klik Simpan'; return; }
+    if(!API_URL){$('loading').textContent='⚠ Masukkan URL server di atas lalu klik Simpan';return;}
     try {
-      const res = await fetch(API_URL, {cache:'no-store'});
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      $('error-banner').style.display = 'none';
-      $('loading').style.display = 'none';
-      $('content').style.display = 'block';
-
-      render(data.total, data.accounts);
-
-      $('last-update').textContent = 'update: '+new Date().toLocaleTimeString('id-ID',{hour12:false});
-      const ri = $('ri'); ri.classList.add('flash');
-      setTimeout(()=>ri.classList.remove('flash'), 400);
+      const res=await fetch(API_URL,{cache:'no-store'});
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data=await res.json();
+      $('error-banner').style.display='none';
+      $('loading').style.display='none';
+      $('content').style.display='block';
+      render(data.total,data.accounts);
+      $('last-update').textContent='update: '+new Date().toLocaleTimeString('id-ID',{hour12:false});
+      const ri=$('ri'); ri.classList.add('flash'); setTimeout(()=>ri.classList.remove('flash'),400);
     } catch(e) {
       const eb=$('error-banner'); eb.style.display='block';
       eb.textContent=`⚠ Gagal konek ke bot: ${e.message} — pastikan bot jalan & URL benar`;
@@ -389,63 +388,57 @@
   }
 
   function render(tot, accounts) {
-    // Big cards
     let totalRph=0, totalDiff=0, maxUptimeMs=0;
-    for (const a of accounts) {
-      totalRph  += rewardPerHour(a);
-      totalDiff += a.diffReward||0;
-      maxUptimeMs = Math.max(maxUptimeMs, Date.now()-a.startTime);
+    for(const a of accounts){
+      totalRph+=rewardPerHour(a); totalDiff+=a.diffReward||0;
+      maxUptimeMs=Math.max(maxUptimeMs,Date.now()-a.startTime);
     }
-    const est24 = totalRph*24;
-    const uh=Math.floor(maxUptimeMs/3600000), um=Math.floor((maxUptimeMs%3600000)/60000);
-    const uptimeStr = uh>0?`${uh}j ${um}m`:`${um}m`;
+    const est24=totalRph*24;
+    const uh=Math.floor(maxUptimeMs/3600000),um=Math.floor((maxUptimeMs%3600000)/60000);
+    const uptimeStr=uh>0?`${uh}j ${um}m`:`${um}m`;
 
-    $('bc-reward').innerHTML = `${tot.reward.toFixed(2)}<span class="bc-unit">CC</span>`;
-    $('bc-uptime-reward').innerHTML =
+    $('bc-reward').innerHTML=`${tot.reward.toFixed(2)}<span class="bc-unit">CC</span>`;
+    $('bc-uptime-reward').innerHTML=
       `Uptime <b>${uptimeStr}</b> &nbsp;·&nbsp; Δ <span class="${totalDiff>=0?'pos':'neg'}">${totalDiff>=0?'+':''}${totalDiff.toFixed(2)} CC</span>`;
-    $('bc-hour').innerHTML  = `+${totalRph.toFixed(4)}<span class="bc-unit">CC/h</span>`;
-    $('bc-est24').innerHTML = `+${est24.toFixed(2)}<span class="bc-unit">CC</span>`;
+    $('bc-hour').innerHTML=`+${totalRph.toFixed(4)}<span class="bc-unit">CC/h</span>`;
+    $('bc-est24').innerHTML=`+${est24.toFixed(2)}<span class="bc-unit">CC</span>`;
 
-    // Saldo total
-    $('tot-cc').innerHTML    = `${tot.cc.toFixed(2)}<span class="sc-unit">CC</span>`;
-    $('tot-ceth').innerHTML  = `${tot.ceth.toFixed(6)}<span class="sc-unit">cETH</span>`;
-    $('tot-usdcx').innerHTML = `${tot.usdcx.toFixed(4)}<span class="sc-unit">USDC</span>`;
+    // Stats
+    $('s-total').innerHTML=`${tot.total}<span class="stat-unit">akun</span>`;
+    $('s-active').textContent=`${tot.active} aktif`;
+    $('s-swaps').innerHTML=`${tot.swaps}<span class="stat-unit">tx</span>`;
+    $('s-cc').innerHTML=`${tot.cc.toFixed(2)}<span class="stat-unit">CC</span>`;
+    $('s-ceth').innerHTML=`${tot.ceth.toFixed(6)}<span class="stat-unit">cETH</span>`;
+    $('s-usdcx').innerHTML=`${tot.usdcx.toFixed(4)}<span class="stat-unit">USDC</span>`;
 
-    // Per-account saldo grid — urut nomor akun
-    const byNum = [...accounts].sort((a,b)=>(a.num||0)-(b.num||0));
+    // Saldo total cards
+    $('tot-cc').innerHTML=`${tot.cc.toFixed(2)}<span class="sc-unit">CC</span>`;
+    $('tot-ceth').innerHTML=`${tot.ceth.toFixed(6)}<span class="sc-unit">cETH</span>`;
+    $('tot-usdcx').innerHTML=`${tot.usdcx.toFixed(4)}<span class="sc-unit">USDC</span>`;
 
-    $('saldo-grid').innerHTML = byNum.map(a => `
+    const byNum=[...accounts].sort((a,b)=>(a.num||0)-(b.num||0));
+
+    // Per-account saldo grid
+    $('saldo-grid').innerHTML=byNum.map(a=>`
       <div class="saldo-acc">
         <div class="sa-name">${a.name}</div>
-        <div class="sa-row">
-          <span class="sa-token">CC</span>
-          <span class="sa-val sa-cc">${(a.cc||0).toFixed(2)}</span>
-        </div>
-        <div class="sa-row">
-          <span class="sa-token">cETH</span>
-          <span class="sa-val sa-ceth">${(a.ceth||0).toFixed(6)}</span>
-        </div>
-        <div class="sa-row">
-          <span class="sa-token">USDCx</span>
-          <span class="sa-val sa-usdcx">${(a.usdcx||0).toFixed(4)}</span>
-        </div>
+        <div class="sa-row"><span class="sa-token">CC</span><span class="sa-val sa-cc">${(a.cc||0).toFixed(2)}</span></div>
+        <div class="sa-row"><span class="sa-token">cETH</span><span class="sa-val sa-ceth">${(a.ceth||0).toFixed(6)}</span></div>
+        <div class="sa-row"><span class="sa-token">USDCx</span><span class="sa-val sa-usdcx">${(a.usdcx||0).toFixed(4)}</span></div>
       </div>`).join('');
 
-    // Table — urut nomor akun
-    $('acc-count').textContent = `${accounts.length} akun`;
-    $('acc-tbody').innerHTML = byNum.map(a => {
-      const rph    = rewardPerHour(a);
-      const est    = rph>0?`+${(rph*24).toFixed(2)}`:'—';
-      const rphStr = rph>0?`+${rph.toFixed(4)}`:'—';
-      const rc  = rankClass(a.rank);
-      const barW = rankBarW(a.rank);
-      const rankDisplay = a.rank>0
-        ? `<div class="rank-cell">
-             <span class="rank-num ${rc}">#${a.rank.toLocaleString()}</span>
-             <div class="rank-bar-wrap"><div class="rank-bar ${rc}" style="width:${barW}%"></div></div>
-           </div>`
-        : `<span class="delta-zero">—</span>`;
-
+    $('acc-count').textContent=`${accounts.length} akun`;
+    $('acc-tbody').innerHTML=byNum.map(a=>{
+      const rph=rewardPerHour(a);
+      const est=rph>0?`+${(rph*24).toFixed(2)}`:'—';
+      const rphStr=rph>0?`+${rph.toFixed(4)}`:'—';
+      const rc=rankClass(a.rank),barW=rankBarW(a.rank);
+      const rankDisplay=a.rank>0
+        ?`<div class="rank-cell">
+            <span class="rank-num ${rc}">#${a.rank.toLocaleString()}</span>
+            <div class="rank-bar-wrap"><div class="rank-bar ${rc}" style="width:${barW}%"></div></div>
+          </div>`
+        :`<span class="delta-zero">—</span>`;
       return `<tr>
         <td class="td-name">${a.name}</td>
         <td>${rankDisplay}</td>
@@ -453,6 +446,7 @@
         <td>${fmtDelta(a.diffReward)}</td>
         <td class="td-hour">${rphStr}</td>
         <td class="td-est">${est}</td>
+        <td class="td-swap">${a.totalSwaps||0}</td>
         <td class="td-uptime">${formatUptime(a.startTime)}</td>
         <td>${statusBadge(a.status)}</td>
       </tr>`;
@@ -460,7 +454,7 @@
   }
 
   fetchData();
-  setInterval(fetchData, 10000);
+  setInterval(fetchData,10000);
 </script>
 </body>
 </html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cantor8 Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050d12;
+    --panel: #0a1a22;
+    --border: #0e3348;
+    --accent: #00e5ff;
+    --accent2: #00ff9d;
+    --accent3: #ff9d00;
+    --warn: #ff4d6d;
+    --text: #c8e6f0;
+    --muted: #3a6070;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Rajdhani', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, #00e5ff0a 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, #0e334808 40px, #0e334808 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, #0e334808 40px, #0e334808 41px);
+  }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    background: #06131acc; backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: var(--mono); font-size: 1rem; color: var(--accent);
+    letter-spacing: 3px; text-shadow: 0 0 20px #00e5ff66;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-dot {
+    width: 8px; height: 8px; background: var(--accent2);
+    border-radius: 50%; animation: pulse 2s infinite; box-shadow: 0 0 10px var(--accent2);
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+  .header-right { display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  #clock { color: var(--accent); }
+  .ri { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+  .ri.flash { animation: flash 0.3s; }
+  @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+  main { padding: 20px 24px; max-width: 1300px; margin: 0 auto; }
+
+  /* Config */
+  .config-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .config-bar label { font-size: 0.7rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .config-bar input {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    font-family: var(--mono); font-size: 0.8rem; padding: 6px 12px; border-radius: 4px; width: 280px; outline: none;
+  }
+  .config-bar input:focus { border-color: var(--accent); }
+  .config-bar button {
+    background: #00e5ff15; border: 1px solid var(--accent); color: var(--accent);
+    font-family: var(--sans); font-weight: 600; font-size: 0.78rem;
+    letter-spacing: 1px; padding: 6px 16px; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+  }
+  .config-bar button:hover { background: #00e5ff25; }
+
+  #error-banner {
+    display: none; background: #ff4d6d11; border: 1px solid #ff4d6d33;
+    color: var(--warn); padding: 12px 20px; border-radius: 6px;
+    font-family: var(--mono); font-size: 0.78rem; margin-bottom: 16px; text-align: center;
+  }
+  #loading { text-align: center; padding: 60px; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; letter-spacing: 2px; }
+
+  /* 3 Big Cards */
+  .big-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
+  .big-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 20px;
+    position: relative; overflow: hidden; text-align: center;
+  }
+  .big-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .bc-reward::before { background: linear-gradient(90deg, transparent, var(--accent3), transparent); }
+  .bc-hour::before   { background: linear-gradient(90deg, transparent, #fbbf24, transparent); }
+  .bc-est::before    { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
+  .bc-label { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .bc-value { font-family: var(--mono); font-size: 2rem; font-weight: bold; line-height: 1; }
+  .bc-reward .bc-value { color: var(--accent3); }
+  .bc-hour   .bc-value { color: #fbbf24; }
+  .bc-est    .bc-value { color: #a78bfa; }
+  .bc-unit { font-size: 0.82rem; color: var(--muted); margin-left: 4px; }
+  .bc-sub  { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 10px; }
+  .bc-sub .pos { color: var(--accent2); }
+  .bc-sub .neg { color: var(--warn); }
+
+  /* ── Saldo Section ── */
+  .section-title {
+    font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px; padding-left: 2px;
+  }
+
+  .saldo-total {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px;
+  }
+  .saldo-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; position: relative; overflow: hidden;
+  }
+  .saldo-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .sc-cc::before    { background: linear-gradient(90deg, transparent, var(--accent2), transparent); }
+  .sc-ceth::before  { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
+  .sc-usdcx::before { background: linear-gradient(90deg, transparent, #60b4ff, transparent); }
+
+  .sc-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .sc-label { font-size: 0.65rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .sc-value { font-family: var(--mono); font-size: 1.5rem; font-weight: bold; }
+  .sc-cc    .sc-value { color: var(--accent2); }
+  .sc-ceth  .sc-value { color: #a78bfa; }
+  .sc-usdcx .sc-value { color: #60b4ff; }
+  .sc-unit { font-size: 0.75rem; color: var(--muted); margin-left: 4px; }
+  .sc-note { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-top: 6px; }
+
+  /* Per-account saldo grid */
+  .saldo-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin-bottom: 24px;
+  }
+  .saldo-acc {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .sa-name { font-family: var(--sans); font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 8px; }
+  .sa-row  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .sa-token { font-size: 0.65rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .sa-val   { font-family: var(--mono); font-size: 0.8rem; }
+  .sa-cc    { color: var(--accent2); }
+  .sa-ceth  { color: #a78bfa; }
+  .sa-usdcx { color: #60b4ff; }
+
+  /* Main table */
+  .table-wrap {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin-bottom: 20px;
+  }
+  .table-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; border-bottom: 1px solid var(--border);
+  }
+  .table-title { font-size: 0.7rem; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+  .acc-count   { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 9px 12px; text-align: left;
+    font-size: 0.62rem; letter-spacing: 1.5px; color: var(--muted);
+    text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #0e334840; transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #00e5ff06; }
+  td { padding: 10px 12px; font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
+
+  .td-name   { font-family: var(--sans); font-weight: 700; font-size: 0.9rem; color: var(--text); }
+  .td-num    { color: var(--muted); font-size: 0.7rem; margin-right: 4px; }
+  .td-reward { color: var(--accent3); }
+  .td-hour   { color: #fbbf24; font-weight: bold; }
+  .td-est    { color: #a78bfa; }
+  .td-uptime { color: var(--muted); font-size: 0.75rem; }
+  .td-cc     { color: var(--accent2); }
+  .td-ceth   { color: #a78bfa; }
+  .td-usdcx  { color: #60b4ff; }
+
+  /* Rank badge */
+  .rank-cell { display: flex; align-items: center; gap: 8px; }
+  .rank-num  { font-family: var(--mono); font-size: 0.85rem; font-weight: bold; min-width: 60px; }
+  .rank-bar-wrap { flex:1; height:4px; background:#0e334860; border-radius:2px; min-width:40px; }
+  .rank-bar  { height:4px; border-radius:2px; transition: width 0.5s; }
+  .rank-s { color: #ffd700; } .rank-bar.rank-s { background: #ffd700; }
+  .rank-a { color: #00ff9d; } .rank-bar.rank-a { background: #00ff9d; }
+  .rank-b { color: #00e5ff; } .rank-bar.rank-b { background: #00e5ff; }
+  .rank-c { color: var(--muted); } .rank-bar.rank-c { background: var(--muted); }
+
+  .delta-pos  { color: var(--accent2); }
+  .delta-neg  { color: var(--warn); }
+  .delta-zero { color: var(--muted); }
+
+  .status-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 3px;
+    font-size: 0.63rem; letter-spacing: 1px; text-transform: uppercase;
+    font-family: var(--sans); font-weight: 600;
+  }
+  .s-swapping { background:#00e5ff1a; color:var(--accent);  border:1px solid #00e5ff33; }
+  .s-bulk     { background:#a855f71a; color:#c084fc;        border:1px solid #a855f733; }
+  .s-wait     { background:#f59e0b1a; color:var(--accent3); border:1px solid #f59e0b33; }
+  .s-init     { background:#ffffff08; color:var(--muted);   border:1px solid #ffffff11; }
+  .s-done     { background:#00ff9d1a; color:var(--accent2); border:1px solid #00ff9d33; }
+  .s-error    { background:#ff4d6d1a; color:var(--warn);    border:1px solid #ff4d6d33; }
+
+  footer {
+    text-align: center; padding: 20px; font-family: var(--mono); font-size: 0.63rem;
+    color: var(--muted); letter-spacing: 2px; border-top: 1px solid var(--border); margin-top: 10px;
+  }
+
+  @media (max-width: 640px) {
+    main { padding: 14px; }
+    .big-cards { grid-template-columns: 1fr; }
+    .bc-value { font-size: 1.5rem; }
+    .saldo-total { grid-template-columns: 1fr; }
+    .saldo-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>CANTOR8 MONITOR</div>
+  <div class="header-right">
+    <span id="clock">--:--:--</span>
+    <span id="last-update">menghubungkan...</span>
+    <div class="ri" id="ri"></div>
+  </div>
+</header>
+
+<main>
+  <div class="config-bar">
+    <label>Server URL</label>
+    <input type="text" id="api-url" placeholder="http://IP_SERVER:3000/api/status" />
+    <button onclick="saveUrl()">Simpan</button>
+  </div>
+
+  <div id="error-banner"></div>
+  <div id="loading">⟳ MENGHUBUNGKAN KE BOT...</div>
+
+  <div id="content" style="display:none">
+
+    <!-- 3 Big Cards -->
+    <div class="big-cards">
+      <div class="big-card bc-reward">
+        <div class="bc-label">🏆 Total Reward Bulan Ini</div>
+        <div class="bc-value" id="bc-reward">—<span class="bc-unit">CC</span></div>
+        <div class="bc-sub" id="bc-uptime-reward">—</div>
+      </div>
+      <div class="big-card bc-hour">
+        <div class="bc-label">⚡ Reward / Jam</div>
+        <div class="bc-value" id="bc-hour">—<span class="bc-unit">CC/h</span></div>
+        <div class="bc-sub">rata-rata semua akun aktif</div>
+      </div>
+      <div class="big-card bc-est">
+        <div class="bc-label">📈 Estimasi / 24 Jam</div>
+        <div class="bc-value" id="bc-est24">—<span class="bc-unit">CC</span></div>
+        <div class="bc-sub">proyeksi berdasarkan reward/jam</div>
+      </div>
+    </div>
+
+    <!-- Saldo Section -->
+    <div class="section-title">💰 Saldo Tersimpan</div>
+
+    <!-- Total Saldo 3 token -->
+    <div class="saldo-total">
+      <div class="saldo-card sc-cc">
+        <div class="sc-icon">🟢</div>
+        <div class="sc-label">Total CC</div>
+        <div class="sc-value" id="tot-cc">—<span class="sc-unit">CC</span></div>
+        <div class="sc-note">saldo CC semua akun</div>
+      </div>
+      <div class="saldo-card sc-ceth">
+        <div class="sc-icon">🟣</div>
+        <div class="sc-label">Total cETH</div>
+        <div class="sc-value" id="tot-ceth">—<span class="sc-unit">cETH</span></div>
+        <div class="sc-note">saldo cETH semua akun</div>
+      </div>
+      <div class="saldo-card sc-usdcx">
+        <div class="sc-icon">🔵</div>
+        <div class="sc-label">Total USDCx</div>
+        <div class="sc-value" id="tot-usdcx">—<span class="sc-unit">USDC</span></div>
+        <div class="sc-note">saldo USDCx semua akun</div>
+      </div>
+    </div>
+
+    <!-- Per-account saldo -->
+    <div class="saldo-grid" id="saldo-grid"></div>
+
+    <!-- Main Table -->
+    <div class="section-title">⬡ Detail & Peringkat Akun</div>
+    <div class="table-wrap">
+      <div class="table-header">
+        <span class="table-title">Urutan sesuai nomor akun</span>
+        <span class="acc-count" id="acc-count"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Akun</th>
+            <th>Peringkat</th>
+            <th>Reward Bulan Ini</th>
+            <th>Δ Selama Uptime</th>
+            <th style="color:#fbbf24">CC/Jam</th>
+            <th style="color:#a78bfa">Est/24h</th>
+            <th>Uptime</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="acc-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<footer>CANTOR8 MONITOR · AUTO REFRESH 10s · DATA DARI BOT LOKAL</footer>
+
+<script>
+  const LS_KEY = 'c8_api_url';
+  let API_URL = localStorage.getItem(LS_KEY) || '';
+  const $ = id => document.getElementById(id);
+
+  function saveUrl() {
+    API_URL = $('api-url').value.trim();
+    if (API_URL) localStorage.setItem(LS_KEY, API_URL);
+    fetchData();
+  }
+  if (API_URL) $('api-url').value = API_URL;
+
+  setInterval(() => { $('clock').textContent = new Date().toLocaleTimeString('id-ID',{hour12:false}); }, 1000);
+  $('clock').textContent = new Date().toLocaleTimeString('id-ID',{hour12:false});
+
+  function formatUptime(startTime) {
+    const ms = Date.now() - startTime;
+    const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000);
+    return h > 0 ? `${h}j ${m}m` : `${m}m`;
+  }
+
+  function rewardPerHour(acc) {
+    const h = (Date.now() - acc.startTime) / 3600000;
+    if (h < 0.05 || !acc.diffReward || acc.diffReward <= 0) return 0;
+    return acc.diffReward / h;
+  }
+
+  function rankClass(r) {
+    if (!r || r<=0) return 'rank-c';
+    if (r<=100)  return 'rank-s';
+    if (r<=1000) return 'rank-a';
+    if (r<=5000) return 'rank-b';
+    return 'rank-c';
+  }
+  function rankBarW(r) {
+    if (!r || r<=0) return 0;
+    return Math.max(4, 100 - (r/20000)*100);
+  }
+
+  function fmtDelta(v) {
+    if (!v||v===0) return `<span class="delta-zero">+0.00 CC</span>`;
+    return `<span class="${v>0?'delta-pos':'delta-neg'}">${v>0?'+':''}${v.toFixed(2)} CC</span>`;
+  }
+
+  function statusBadge(st) {
+    const s = (st||'init').toLowerCase();
+    let cls='s-init', label=st||'init';
+    if (s.includes('swap'))                              {cls='s-swapping';label='swapping';}
+    else if (s.includes('bulk'))                         {cls='s-bulk';    label='bulk-back';}
+    else if (s.includes('wait')||s.includes('menunggu')) {cls='s-wait';    label=st;}
+    else if (s==='done')                                 {cls='s-done';    label='done';}
+    else if (s.includes('error')||s.includes('gagal'))   {cls='s-error';   label=st;}
+    return `<span class="status-badge ${cls}">${label}</span>`;
+  }
+
+  async function fetchData() {
+    if (!API_URL) { $('loading').textContent='⚠ Masukkan URL server di atas lalu klik Simpan'; return; }
+    try {
+      const res = await fetch(API_URL, {cache:'no-store'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      $('error-banner').style.display = 'none';
+      $('loading').style.display = 'none';
+      $('content').style.display = 'block';
+
+      render(data.total, data.accounts);
+
+      $('last-update').textContent = 'update: '+new Date().toLocaleTimeString('id-ID',{hour12:false});
+      const ri = $('ri'); ri.classList.add('flash');
+      setTimeout(()=>ri.classList.remove('flash'), 400);
+    } catch(e) {
+      const eb=$('error-banner'); eb.style.display='block';
+      eb.textContent=`⚠ Gagal konek ke bot: ${e.message} — pastikan bot jalan & URL benar`;
+    }
+  }
+
+  function render(tot, accounts) {
+    // Big cards
+    let totalRph=0, totalDiff=0, maxUptimeMs=0;
+    for (const a of accounts) {
+      totalRph  += rewardPerHour(a);
+      totalDiff += a.diffReward||0;
+      maxUptimeMs = Math.max(maxUptimeMs, Date.now()-a.startTime);
+    }
+    const est24 = totalRph*24;
+    const uh=Math.floor(maxUptimeMs/3600000), um=Math.floor((maxUptimeMs%3600000)/60000);
+    const uptimeStr = uh>0?`${uh}j ${um}m`:`${um}m`;
+
+    $('bc-reward').innerHTML = `${tot.reward.toFixed(2)}<span class="bc-unit">CC</span>`;
+    $('bc-uptime-reward').innerHTML =
+      `Uptime <b>${uptimeStr}</b> &nbsp;·&nbsp; Δ <span class="${totalDiff>=0?'pos':'neg'}">${totalDiff>=0?'+':''}${totalDiff.toFixed(2)} CC</span>`;
+    $('bc-hour').innerHTML  = `+${totalRph.toFixed(4)}<span class="bc-unit">CC/h</span>`;
+    $('bc-est24').innerHTML = `+${est24.toFixed(2)}<span class="bc-unit">CC</span>`;
+
+    // Saldo total
+    $('tot-cc').innerHTML    = `${tot.cc.toFixed(2)}<span class="sc-unit">CC</span>`;
+    $('tot-ceth').innerHTML  = `${tot.ceth.toFixed(6)}<span class="sc-unit">cETH</span>`;
+    $('tot-usdcx').innerHTML = `${tot.usdcx.toFixed(4)}<span class="sc-unit">USDC</span>`;
+
+    // Per-account saldo grid — urut nomor akun
+    const byNum = [...accounts].sort((a,b)=>(a.num||0)-(b.num||0));
+
+    $('saldo-grid').innerHTML = byNum.map(a => `
+      <div class="saldo-acc">
+        <div class="sa-name">${a.name}</div>
+        <div class="sa-row">
+          <span class="sa-token">CC</span>
+          <span class="sa-val sa-cc">${(a.cc||0).toFixed(2)}</span>
+        </div>
+        <div class="sa-row">
+          <span class="sa-token">cETH</span>
+          <span class="sa-val sa-ceth">${(a.ceth||0).toFixed(6)}</span>
+        </div>
+        <div class="sa-row">
+          <span class="sa-token">USDCx</span>
+          <span class="sa-val sa-usdcx">${(a.usdcx||0).toFixed(4)}</span>
+        </div>
+      </div>`).join('');
+
+    // Table — urut nomor akun
+    $('acc-count').textContent = `${accounts.length} akun`;
+    $('acc-tbody').innerHTML = byNum.map(a => {
+      const rph    = rewardPerHour(a);
+      const est    = rph>0?`+${(rph*24).toFixed(2)}`:'—';
+      const rphStr = rph>0?`+${rph.toFixed(4)}`:'—';
+      const rc  = rankClass(a.rank);
+      const barW = rankBarW(a.rank);
+      const rankDisplay = a.rank>0
+        ? `<div class="rank-cell">
+             <span class="rank-num ${rc}">#${a.rank.toLocaleString()}</span>
+             <div class="rank-bar-wrap"><div class="rank-bar ${rc}" style="width:${barW}%"></div></div>
+           </div>`
+        : `<span class="delta-zero">—</span>`;
+
+      return `<tr>
+        <td class="td-name">${a.name}</td>
+        <td>${rankDisplay}</td>
+        <td class="td-reward">${(a.monthReward||0).toFixed(2)} CC</td>
+        <td>${fmtDelta(a.diffReward)}</td>
+        <td class="td-hour">${rphStr}</td>
+        <td class="td-est">${est}</td>
+        <td class="td-uptime">${formatUptime(a.startTime)}</td>
+        <td>${statusBadge(a.status)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  fetchData();
+  setInterval(fetchData, 10000);
+</script>
+</body>
+</html>
